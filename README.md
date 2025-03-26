@@ -11,40 +11,49 @@ Este proyecto es una aplicación web de gestión de gastos personales que permit
 ## Requerimientos funcionales
 
 ### Modelos de base de datos
-#### Usuario
+#### Usuario (Login)
 - `username` (correo electrónico)
 - `password`
-- `token` (recuperación)
+- `token` (para recuperación de contraseña)
+
+#### Usuario
+- `id`
 - `nombre_completo`
 - `edad`
 
-#### Cuentas_de_banco
+#### Cuenta de banco
+- `id`
 - `usuario` (relación con Usuario)
 - `banco`
 - `is_favorita`
 - `saldo`
-- `fecha_de_ultimo_deposito`
+- `fecha_ultimo_deposito`
 
-#### Gastos
-- `usuario` (relación con Usuario)
-- `monto`
-- `fecha`
-- `descripción`
-- `titulo`
+Un usuario puede tener varios registros de cuentas de banco.
 
 #### Fecha
 - `mes`
 - `año`
 
+#### Gastos
+- `id`
+- `usuario` (relación con Usuario)
+- `monto`
+- `fecha`
+- `descripción` (opcional)
+- `título`
+
 ### Funcionalidades principales
 - **Dashboard interactivo:**
   - Visualización de la actividad de gastos por mes del usuario autenticado.
-  - Gráficos y estadísticas sobre los gastos.
+  - Gráficos (pastel o barras) con opción para actualizar el dashboard por más meses.
 - **API REST:**
   - Soporte para operaciones **CRUD (GET, POST, PUT, DELETE)** en todas las entidades del sistema.
   - Arquitectura asíncrona para una mejor experiencia de usuario.
+  - Todas las vistas deben conectarse asincrónicamente con la API.
 - **Identidad de empresa:**
   - Desarrollo bajo la marca **CAMILA**.
+  - Diseño de logo y elección de colores para la empresa.
 - **Descarga de gastos:**
   - Posibilidad de exportar estados de cuenta de bancos.
 
@@ -52,13 +61,13 @@ Este proyecto es una aplicación web de gestión de gastos personales que permit
 
 - **Estilos y Diseño:**
   - UI amigable basada en **PrimeReact y PrimeFlex**.
+  - Aplicación de estándares de diseño.
 - **Responsividad:**
   - Diseño adaptativo para móviles y escritorios.
 - **Usabilidad:**
-  - Consejos y guías para el usuario.
   - Indicadores de carga (spinners).
-  - Mensajes de notificación y feedback.
-  - Aplicación de estándares de desarrollo.
+  - Mensajes de error y confirmación.
+  - Iconografía informativa para mantener al usuario informado.
 
 ## Instalación y Ejecución
 ### Backend (Django + MySQL)
@@ -98,6 +107,9 @@ Este proyecto es una aplicación web de gestión de gastos personales que permit
 | **GET** | `/api/cuentas/` | Obtener lista de cuentas bancarias |
 | **POST** | `/api/cuentas/` | Registrar una cuenta bancaria |
 
+## Documentación
+Se mantendrá documentación sobre el desarrollo del sistema para futuras referencias y necesidades.
+
 ## Contribución
 Si deseas contribuir a este proyecto, sigue estos pasos:
 1. Realiza un **fork** del repositorio.
@@ -108,3 +120,5 @@ Si deseas contribuir a este proyecto, sigue estos pasos:
 
 ## Contacto
 Desarrollado por **Equipo Camila**. Para más información o dudas, contáctanos a [correo@empresa.com](mailto:correo@empresa.com).
+
+
