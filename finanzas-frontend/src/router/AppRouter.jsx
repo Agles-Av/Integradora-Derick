@@ -3,6 +3,9 @@ import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements, N
 import AuthContext from '../config/context/auth-context'
 import Login from '../modules/controlacceso/Login';
 import SideBarLayout from '../modules/SideBarLayout';
+import DashBoard from '../modules/user/DashBoard';
+import Cuentas from '../modules/user/Cuentas';
+import Gastos from '../modules/user/Gastos';
 
 function AppRouter() {
     const { user } = useContext(AuthContext);
@@ -21,10 +24,10 @@ function AppRouter() {
                     path="/" 
                     element={user?.signed ? <SideBarLayout /> : <Navigate to="/login" replace />}
                 >
-                    <Route index element={<div>DASHBOARD</div>} />
-                    <Route path="dashboard" element={<div>DASHBOARD</div>} />
-                    <Route path="accounts" element={<div>CUENTAS</div>} />
-                    <Route path="expenses" element={<div>GASTOS</div>} />
+                    <Route index element={<DashBoard/>} />
+                    <Route path="dashboard" element={<DashBoard/>} />
+                    <Route path="accounts" element={<Cuentas/>} />
+                    <Route path="expenses" element={<Gastos/>} />
                 </Route>
                 
                 {/* Ruta 404 */}

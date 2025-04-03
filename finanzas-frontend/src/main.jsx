@@ -6,7 +6,7 @@ import { AlertContainer } from './components/alertas/AlertHelper.jsx';
 
 
 import 'primereact/resources/primereact.css'; // Estilos base primero
-import 'primereact/resources/themes/bootstrap4-light-purple/theme.css'; // Tema después
+import 'primereact/resources/themes/mdc-light-deeppurple/theme.css'
 import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
 

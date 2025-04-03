@@ -18,7 +18,7 @@ const ConfirmDialog = ({
       case "success": return "pi pi-check-circle";
       case "error": return "pi pi-times-circle";
       case "warning": return "pi pi-exclamation-triangle";
-      case "info": 
+      case "info":
       default: return "pi pi-info-circle";
     }
   };
@@ -28,26 +28,27 @@ const ConfirmDialog = ({
       case "success": return "success";
       case "error": return "danger";
       case "warning": return "warning";
-      case "info": 
+      case "info":
       default: return "info";
     }
   };
 
   const footer = (
     <div className="flex justify-content-end gap-2">
+
+      <Button
+        label={confirmText}
+        onClick={onConfirm}
+        severity={getSeverity()}
+        autoFocus
+      />
       {showCancel && (
-        <Button 
-          label={cancelText} 
-          onClick={onHide} 
-          className="p-button-text" 
+        <Button
+          label={cancelText}
+          onClick={onHide}
+          className="p-button-text"
         />
       )}
-      <Button 
-        label={confirmText} 
-        onClick={onConfirm} 
-        severity={getSeverity()} 
-        autoFocus 
-      />
     </div>
   );
 

@@ -12,12 +12,12 @@ export const AxiosClient = axios.create({
 const requestHandler = (request) => {
     request.headers["Accept"] = "application/json";
     request.headers["Content-Type"] = "application/json";
-    const session = JSON.parse(localStorage.getItem("token")) || null;
-    if (session) {
-        request.headers["Authorization"] = `Bearer ${session}`;
+    const token = localStorage.getItem("token"); // Elimina JSON.parse aquí
+    if (token) {
+        request.headers["Authorization"] = `Bearer ${token}`;
     }
     return request;
-}
+};
 
 AxiosClient.interceptors.request.use(
     (request) => requestHandler(request),
