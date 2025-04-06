@@ -99,10 +99,15 @@ function Login() {
                             />
                         </div>
                     </form>
-                    <div >
+                    <div className='felx space-between mt-4'>
+                        <p className="text-center">
+                            <a href="/register" className="text-blue-500 hover:underline">
+                                ¿No tienes cuenta? crea una
+                            </a>
+                        </p>
                         <p className="text-center">
                             <a href="/forgot-password" className="text-blue-500 hover:underline mt-2">
-                                Olvidé mi contraseña
+                                Recuperar  contraseña
                             </a>
                         </p>
                     </div>

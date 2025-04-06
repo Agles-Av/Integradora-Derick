@@ -136,6 +136,8 @@ const Cuentas = () => {
 
   // Template para la columna de favoritos
   const favoritoBodyTemplate = (rowData) => {
+    console.log("Estado de favorio",rowData.favorito);
+    
     return (
       <Rating
         value={rowData.favorito}

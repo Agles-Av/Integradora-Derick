@@ -29,8 +29,10 @@ export default function AgregarCuentaModal({ visible, setVisible }) {
             usuario: id,
             banco: banco,
             saldo: saldo,
-            is_favorita: isFavorita,
+            esFavorito: isFavorita,
         };
+        console.log("Datos a enviar",nuevobanco);
+        
         
         try {
             const resposne = await AxiosClient({

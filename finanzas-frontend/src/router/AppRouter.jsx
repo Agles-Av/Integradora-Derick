@@ -6,6 +6,7 @@ import SideBarLayout from '../modules/SideBarLayout';
 import DashBoard from '../modules/user/DashBoard';
 import Cuentas from '../modules/user/Cuentas';
 import Gastos from '../modules/user/Gastos';
+import Registrar from '../modules/controlacceso/Registrar';
 
 function AppRouter() {
     const { user } = useContext(AuthContext);
@@ -18,6 +19,7 @@ function AppRouter() {
                     path="/login" 
                     element={!user?.signed ? <Login /> : <Navigate to="/" replace />} 
                 />
+                <Route path='/register' element={<Registrar/>} />
                 
                 {/* Rutas protegidas */}
                 <Route 
