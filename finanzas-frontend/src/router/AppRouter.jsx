@@ -7,6 +7,7 @@ import DashBoard from '../modules/user/DashBoard';
 import Cuentas from '../modules/user/Cuentas';
 import Gastos from '../modules/user/Gastos';
 import { lazy, Suspense } from 'react';
+import NotFound404 from '../modules/NotFound404';
 
 function AppRouter() {
     const Login = lazy(() => import('../modules/controlacceso/Login'))
@@ -43,7 +44,7 @@ function AppRouter() {
                 </Route>
 
                 {/* Ruta 404 */}
-                <Route path="*" element={<div>404 NOT FOUND</div>} />
+                <Route path="*" element={<NotFound404/>} />
             </Route>
         )
     );
