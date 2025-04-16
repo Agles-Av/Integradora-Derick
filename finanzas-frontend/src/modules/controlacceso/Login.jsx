@@ -6,12 +6,16 @@ import { Button } from 'primereact/button';
 import { login } from '../../services/authservice/LoginService';
 import { useNavigate } from 'react-router-dom';
 import { Player } from '@lottiefiles/react-lottie-player';
+import { Dialog } from 'primereact/dialog';
+import { sendEmail } from '../../services/authservice/RecuperarContrasena';
 import AuthContext from '../../config/context/auth-context';
 
 
 function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [visible, setVisible] = useState(false);
+    const [email, setEmail] = useState('');
     const { dispatch } = React.useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -32,8 +36,20 @@ function Login() {
         }
     };
 
+    const sendEmailRecover = async () => {
+        
+        try {
+            await sendEmail(email);
+            setVisible(false);
+        } catch (error) {
+        }finally{
+            setEmail('');
+            setEmail('');
+            setVisible(false);
+        }
+    }
     return (
-        <div className="flex justify-content-center align-items-center h-screen text-primary">
+        <div className="flex justify-content-center align-items-center h-screen text-primary ">
             <div
                 className="fixed top-0 left-0 w-full h-full overflow-hidden z-0"
                 style={{ pointerEvents: 'none' }}
@@ -96,23 +112,45 @@ function Login() {
                                 label='Iniciar sesión'
                                 type='submit'
                                 className='w-full'
+                                disabled={!username || !password}
                             />
                         </div>
                     </form>
                     <div className='felx space-between mt-4'>
                         <p className="text-center">
-                            <a href="/register" className="text-blue-500 hover:underline">
+                            <a href="/register" >
                                 ¿No tienes cuenta? crea una
                             </a>
                         </p>
                         <p className="text-center">
-                            <a href="/forgot-password" className="text-blue-500 hover:underline mt-2">
-                                Recuperar  contraseña
+                            <a onClick={() => setVisible(true)} className=' text-primary cursor-pointer'>
+                                Has clic aquí si olvidaste tu contraseña
                             </a>
                         </p>
                     </div>
                 </div>
             </Card>
+
+            <Dialog header="Ingrese correo de recuperación" visible={visible} onHide={() => setVisible(false)}
+            style={{ width: '30vw' }} 
+            >
+                    <div className="mt-3 ">
+                        <FloatLabel>
+                            <InputText
+                                id="email"
+                                className="w-full"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                            <label htmlFor="email" className=''>
+                                <i className="pi pi-envelope mr-2"></i> Correo electrónico
+                            </label>
+                        </FloatLabel>
+                        <Button label='Enviar' onClick={()=>sendEmailRecover()}  className=' mt-4 w-full' />
+                    </div>
+
+               
+            </Dialog>
         </div>
     );
 }

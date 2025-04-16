@@ -17,9 +17,8 @@ const Registrar = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-
         try {
-            const response = await registrar(name, lastName, age, email, password);
+            await registrar(name, lastName, age, email, password);
             navigate('/login');
         } catch (error) {
         }

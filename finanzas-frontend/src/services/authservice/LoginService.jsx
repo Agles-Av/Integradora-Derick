@@ -29,7 +29,7 @@ export const login = async (email, password) => {
         }
     } catch (error) {
         AlertHelper.showAlert(
-            error.response?.data?.detail || "Credenciales incorrectas",
+            "Credenciales incorrectas",
             'error'
         );
         throw error;  // Propaga el error para manejo adicional

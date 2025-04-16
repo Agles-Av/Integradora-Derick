@@ -1,37 +1,47 @@
 import React, { useContext } from 'react'
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements, Navigate } from 'react-router-dom'
 import AuthContext from '../config/context/auth-context'
-import Login from '../modules/controlacceso/Login';
+
 import SideBarLayout from '../modules/SideBarLayout';
 import DashBoard from '../modules/user/DashBoard';
 import Cuentas from '../modules/user/Cuentas';
 import Gastos from '../modules/user/Gastos';
-import Registrar from '../modules/controlacceso/Registrar';
+import { lazy, Suspense } from 'react';
 
 function AppRouter() {
+    const Login = lazy(() => import('../modules/controlacceso/Login'))
+    const Registrar = lazy(() => import('../modules/controlacceso/Registrar'))
+    const RecuperarContrasena = lazy(() => import('../modules/controlacceso/RecuperarContrasena'))
     const { user } = useContext(AuthContext);
 
     const router = createBrowserRouter(
         createRoutesFromElements(
             <Route>
                 {/* Ruta pública */}
-                <Route 
-                    path="/login" 
-                    element={!user?.signed ? <Login /> : <Navigate to="/" replace />} 
+                <Route
+                    path="/login"
+                    element={<Suspense fallback={<div>Cargando...</div>}>
+                        {!user?.signed ? <Login /> : <Navigate to="/" replace />}
+                    </Suspense>}
                 />
-                <Route path='/register' element={<Registrar/>} />
-                
+                <Route path='/register' element={<Suspense fallback={<>Cargando...</>}>
+                <Registrar/>
+                </Suspense>} />
+                <Route path='/reset-password' element={<Suspense fallback={<>Cargando...</>}>
+                <RecuperarContrasena/>
+                </Suspense>} />
+
                 {/* Rutas protegidas */}
-                <Route 
-                    path="/" 
+                <Route
+                    path="/"
                     element={user?.signed ? <SideBarLayout /> : <Navigate to="/login" replace />}
                 >
-                    <Route index element={<DashBoard/>} />
-                    <Route path="dashboard" element={<DashBoard/>} />
-                    <Route path="accounts" element={<Cuentas/>} />
-                    <Route path="expenses" element={<Gastos/>} />
+                    <Route index element={<DashBoard />} />
+                    <Route path="dashboard" element={<DashBoard />} />
+                    <Route path="accounts" element={<Cuentas />} />
+                    <Route path="expenses" element={<Gastos />} />
                 </Route>
-                
+
                 {/* Ruta 404 */}
                 <Route path="*" element={<div>404 NOT FOUND</div>} />
             </Route>

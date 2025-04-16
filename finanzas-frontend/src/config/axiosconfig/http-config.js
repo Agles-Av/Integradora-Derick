@@ -9,6 +9,7 @@ export const AxiosClient = axios.create({
     }
 })
 
+
 const requestHandler = (request) => {
     request.headers["Accept"] = "application/json";
     request.headers["Content-Type"] = "application/json";
@@ -18,6 +19,10 @@ const requestHandler = (request) => {
     }
     return request;
 };
+
+
+
+// Interceptor para manejar las respuestas
 
 AxiosClient.interceptors.request.use(
     (request) => requestHandler(request),

@@ -44,6 +44,8 @@ const Cuentas = () => {
     }
   }
   const getCuentas = async () => {
+    console.log("Obteniendo cuentas");
+    
     try {
       const response = await AxiosClient({
         method: "GET",

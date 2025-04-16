@@ -1,7 +1,7 @@
 import AxiosClient from "../../config/axiosconfig/http-config";
 import { AlertHelper } from "../../components/alertas/AlertHelper";
 
-export const registrar = async (name, lastName,age ,email, password) => {
+export const registrar = async (name, lastName, age, email, password) => {
     const data = {
         name: name,
         surname: lastName,
@@ -31,6 +31,6 @@ export const registrar = async (name, lastName,age ,email, password) => {
             error.response?.data?.detail || "Error al registrar",
             'error'
         );
-        throw error;  // Propaga el error para manejo adicional
+        throw error;
     }
 }
