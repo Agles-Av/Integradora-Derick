@@ -10,7 +10,6 @@ import AxiosClient from "../../config/axiosconfig/http-config";
 import { AlertHelper } from "../alertas/AlertHelper";
 
 export default function AgregarGastoModal({ visible, setVisible, onGastoAgregado }) {
-    // Estados del formulario
     const [titulo, setTitulo] = useState("");
     const [monto, setMonto] = useState(null);
     const [fecha, setFecha] = useState(new Date());
@@ -18,8 +17,8 @@ export default function AgregarGastoModal({ visible, setVisible, onGastoAgregado
     const [cuentaId, setCuentaId] = useState(null);
     const [cuentas, setCuentas] = useState([]);
     const [errors, setErrors] = useState({});
-    const [loading, setLoading] = useState(false);
-
+    const [touched, setTouched] = useState({ titulo: false, monto: false, cuenta: false });
+    const [isFormValid, setIsFormValid] = useState(false);
 
     const getCuentas = async () => {
         try {
@@ -39,50 +38,70 @@ export default function AgregarGastoModal({ visible, setVisible, onGastoAgregado
     useEffect(() => {
         if (visible) {
             getCuentas();
+            setTouched({ titulo: false, monto: false, cuenta: false });
         }
     }, [visible]);
 
-    // Función para validar y enviar el formulario
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-        // Validaciones
+    useEffect(() => {
         const newErrors = {};
-        if (!titulo.trim()) newErrors.titulo = "El título es requerido";
-        if (!monto || monto <= 0) newErrors.monto = "El monto debe ser mayor a 0";
-        if (!cuentaId) newErrors.cuenta = "Debes seleccionar una cuenta";
-        
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            return;
+
+        if (touched.titulo) {
+            if (!titulo.trim()) {
+                newErrors.titulo = "El título es requerido";
+            } else if (!/^[a-zA-Z0-9()." ]+$/.test(titulo)) {
+                newErrors.titulo = "Solo se permiten letras, números y ().\"";
+            }
         }
 
+        if (touched.monto) {
+            if (monto == null || monto === "") {
+                newErrors.monto = "El monto es requerido";
+            } else if (monto <= 0) {
+                newErrors.monto = "El monto debe ser mayor a 0";
+            }
+        }
+
+        if (touched.cuenta && !cuentaId) {
+            newErrors.cuenta = "Debes seleccionar una cuenta";
+        }
+
+        setErrors(newErrors);
+        setIsFormValid(
+            titulo.trim() &&
+            /^[a-zA-Z0-9()." ]+$/.test(titulo) &&
+            monto > 0 &&
+            cuentaId
+        );
+    }, [titulo, monto, cuentaId, touched]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
         const user = JSON.parse(localStorage.getItem("user"));
-        
+
         const nuevoGasto = {
             usuario: user.id,
             cuenta: cuentaId,
-            titulo: titulo,
-            monto: monto,
-            fecha: fecha.toISOString().split('T')[0], // Formato YYYY-MM-DD
-            descripcion: descripcion
+            titulo,
+            monto,
+            fecha: fecha.toISOString().split('T')[0],
+            descripcion,
         };
-        
-        setLoading(true);
+
         try {
-            const response = await AxiosClient({
+            await AxiosClient({
                 method: "POST",
                 url: "finanzas/gastos/",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                data: nuevoGasto
+                data: nuevoGasto,
             });
-            
+
             AlertHelper.showAlert("Gasto agregado correctamente", "success");
-            if (onGastoAgregado) onGastoAgregado();
-            
-            // Resetear formulario
+            onGastoAgregado?.();
+
+            // Reset form
             setTitulo("");
             setMonto(null);
             setFecha(new Date());
@@ -92,22 +111,27 @@ export default function AgregarGastoModal({ visible, setVisible, onGastoAgregado
             setVisible(false);
         } catch (error) {
             AlertHelper.showAlert(error.message || "Error al agregar gasto", "error");
-        } finally {
-            setLoading(false);
         }
     };
 
-    // Template para mostrar cada opción en el dropdown
-    const cuentaTemplate = (option) => {
-        return (
-            <div className="flex align-items-center">
-                <span>{option.banco}</span>
-                <span className="ml-2" style={{ color: option.saldo < 0 ? 'var(--red-500)' : 'var(--green-500)' }}>
-                    (${option.saldo})
-                </span>
-            </div>
-        );
-    };
+    const cuentaTemplate = (option) => (
+        <div className="flex align-items-center">
+            <span>{option.banco}</span>
+            <span className="ml-2" style={{ color: option.saldo < 0 ? 'var(--red-500)' : 'var(--green-500)' }}>
+                (${option.saldo})
+            </span>
+        </div>
+    );
+
+    const cancelHandler = () => {
+        setTitulo("");
+        setMonto(null);
+        setFecha(new Date());
+        setDescripcion("");
+        setCuentaId(null);
+        setErrors({});
+        setVisible(false);
+    }
 
     return (
         <Dialog
@@ -119,13 +143,14 @@ export default function AgregarGastoModal({ visible, setVisible, onGastoAgregado
         >
             <div className="mt-3">
                 <form onSubmit={handleSubmit} className="p-fluid">
-                    {/* Seleccionar cuenta */}
+                    {/* Cuenta */}
                     <div className="field mb-4">
                         <FloatLabel>
                             <Dropdown
                                 id="cuenta"
                                 value={cuentaId}
                                 onChange={(e) => setCuentaId(e.value)}
+                                onBlur={() => setTouched((prev) => ({ ...prev, cuenta: true }))}
                                 options={cuentas}
                                 optionLabel="banco"
                                 optionValue="id"
@@ -146,7 +171,9 @@ export default function AgregarGastoModal({ visible, setVisible, onGastoAgregado
                                 id="titulo"
                                 value={titulo}
                                 onChange={(e) => setTitulo(e.target.value)}
+                                onBlur={() => setTouched((prev) => ({ ...prev, titulo: true }))}
                                 className={`w-full ${errors.titulo ? "p-invalid" : ""}`}
+                                maxLength={50}
                             />
                             <label htmlFor="titulo">Título*</label>
                         </FloatLabel>
@@ -163,6 +190,7 @@ export default function AgregarGastoModal({ visible, setVisible, onGastoAgregado
                                 locale="es-MX"
                                 value={monto}
                                 onValueChange={(e) => setMonto(e.value)}
+                                onBlur={() => setTouched((prev) => ({ ...prev, monto: true }))}
                                 className={`w-full ${errors.monto ? "p-invalid" : ""}`}
                             />
                             <label htmlFor="monto">Monto*</label>
@@ -200,19 +228,19 @@ export default function AgregarGastoModal({ visible, setVisible, onGastoAgregado
 
                     {/* Botones */}
                     <div className="flex justify-content-end mt-4">
-                        <Button 
-                            label="Cancelar" 
-                            icon="pi pi-times" 
-                            onClick={() => setVisible(false)} 
-                            className="p-button-text" 
-                            disabled={loading}
+                        <Button
+                            label="Cancelar"
+                            icon="pi pi-times"
+                            onClick={() => cancelHandler()}
+                            className="p-button-text"
+                            type="button"
                         />
-                        <Button 
-                            label="Guardar" 
-                            icon="pi pi-check" 
-                            type="submit" 
-                            className="p-button-primary ml-2" 
-                            loading={loading}
+                        <Button
+                            label="Guardar"
+                            icon="pi pi-check"
+                            type="submit"
+                            className="p-button-primary ml-2"
+                            disabled={!isFormValid}
                         />
                     </div>
                 </form>

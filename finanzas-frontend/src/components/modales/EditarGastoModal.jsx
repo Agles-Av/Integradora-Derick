@@ -10,7 +10,6 @@ import AxiosClient from "../../config/axiosconfig/http-config";
 import { AlertHelper } from "../alertas/AlertHelper";
 
 export default function EditarGastoModal({ visible, setVisible, gastoId, onGastoEditado }) {
-    // Estados del formulario
     const [titulo, setTitulo] = useState("");
     const [monto, setMonto] = useState(null);
     const [fecha, setFecha] = useState(new Date());
@@ -21,15 +20,12 @@ export default function EditarGastoModal({ visible, setVisible, gastoId, onGasto
     const [loading, setLoading] = useState(false);
     const [initialLoad, setInitialLoad] = useState(true);
 
-    // Obtener las cuentas del usuario
     const getCuentas = async () => {
         try {
             const response = await AxiosClient({
                 method: "GET",
                 url: "finanzas/cuentas/mis-cuentas/",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
             });
             setCuentas(response.cuentas);
         } catch (error) {
@@ -37,27 +33,20 @@ export default function EditarGastoModal({ visible, setVisible, gastoId, onGasto
         }
     };
 
-    // Obtener los datos del gasto a editar
     const getGasto = async () => {
         if (!gastoId) return;
-        
         setLoading(true);
         try {
             const response = await AxiosClient({
                 method: "GET",
                 url: `finanzas/gastos/${gastoId}/`,
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
             });
-            
-            // Formatear los datos recibidos
             setTitulo(response.titulo || "");
             setMonto(parseFloat(response.monto) || 0);
             setFecha(response.fecha ? new Date(response.fecha) : new Date());
             setDescripcion(response.descripcion || "");
             setCuentaId(response.cuenta?.id || null);
-            
         } catch (error) {
             AlertHelper.showAlert(error.message, "error");
         } finally {
@@ -71,32 +60,29 @@ export default function EditarGastoModal({ visible, setVisible, gastoId, onGasto
             getCuentas();
             getGasto();
         } else {
-            // Resetear al cerrar el modal
             setInitialLoad(true);
         }
     }, [visible, gastoId]);
 
-    // Función para actualizar el gasto
     const handleUpdate = async (e) => {
         e.preventDefault();
-        
-        // Validaciones
+
         const newErrors = {};
         if (!titulo.trim()) newErrors.titulo = "El título es requerido";
         if (!monto || monto <= 0) newErrors.monto = "El monto debe ser mayor a 0";
         if (!cuentaId) newErrors.cuenta = "Debes seleccionar una cuenta";
-        
+
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             return;
         }
 
         const updatedGasto = {
-            titulo: titulo,
+            titulo,
             cuenta: cuentaId,
-            monto: monto,
-            fecha: fecha.toISOString().split('T')[0], // Formato YYYY-MM-DD
-            descripcion: descripcion
+            monto,
+            fecha: fecha.toISOString().split('T')[0],
+            descripcion
         };
 
         setLoading(true);
@@ -104,12 +90,9 @@ export default function EditarGastoModal({ visible, setVisible, gastoId, onGasto
             await AxiosClient({
                 method: "PUT",
                 url: `finanzas/gastos/${gastoId}/`,
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 data: updatedGasto,
             });
-            
             AlertHelper.showAlert("Gasto actualizado correctamente", "success");
             if (onGastoEditado) onGastoEditado();
             setVisible(false);
@@ -120,17 +103,14 @@ export default function EditarGastoModal({ visible, setVisible, gastoId, onGasto
         }
     };
 
-    // Template para mostrar cada opción en el dropdown
-    const cuentaTemplate = (option) => {
-        return (
-            <div className="flex align-items-center">
-                <span>{option.banco}</span>
-                <span className="ml-2" style={{ color: parseFloat(option.saldo) < 0 ? 'var(--red-500)' : 'var(--green-500)' }}>
-                    (${option.saldo})
-                </span>
-            </div>
-        );
-    };
+    const cuentaTemplate = (option) => (
+        <div className="flex align-items-center">
+            <span>{option.banco}</span>
+            <span className="ml-2" style={{ color: parseFloat(option.saldo) < 0 ? 'var(--red-500)' : 'var(--green-500)' }}>
+                (${option.saldo})
+            </span>
+        </div>
+    );
 
     return (
         <Dialog
@@ -147,7 +127,6 @@ export default function EditarGastoModal({ visible, setVisible, gastoId, onGasto
             ) : (
                 <div className="mt-3">
                     <form onSubmit={handleUpdate} className="p-fluid">
-                        {/* Seleccionar cuenta */}
                         <div className="field mb-4">
                             <FloatLabel>
                                 <Dropdown
@@ -167,7 +146,6 @@ export default function EditarGastoModal({ visible, setVisible, gastoId, onGasto
                             {errors.cuenta && <small className="p-error">{errors.cuenta}</small>}
                         </div>
 
-                        {/* Título */}
                         <div className="field mb-4">
                             <FloatLabel>
                                 <InputText
@@ -182,7 +160,6 @@ export default function EditarGastoModal({ visible, setVisible, gastoId, onGasto
                             {errors.titulo && <small className="p-error">{errors.titulo}</small>}
                         </div>
 
-                        {/* Monto */}
                         <div className="field mb-4">
                             <FloatLabel>
                                 <InputNumber
@@ -200,7 +177,6 @@ export default function EditarGastoModal({ visible, setVisible, gastoId, onGasto
                             {errors.monto && <small className="p-error">{errors.monto}</small>}
                         </div>
 
-                        {/* Fecha */}
                         <div className="field mb-4">
                             <FloatLabel>
                                 <Calendar
@@ -216,7 +192,6 @@ export default function EditarGastoModal({ visible, setVisible, gastoId, onGasto
                             </FloatLabel>
                         </div>
 
-                        {/* Descripción */}
                         <div className="field mb-4">
                             <FloatLabel>
                                 <InputText
@@ -230,7 +205,6 @@ export default function EditarGastoModal({ visible, setVisible, gastoId, onGasto
                             </FloatLabel>
                         </div>
 
-                        {/* Botones */}
                         <div className="flex justify-content-end mt-4">
                             <Button 
                                 label="Cancelar" 
