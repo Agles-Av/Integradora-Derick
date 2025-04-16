@@ -59,6 +59,11 @@ function Login() {
             setVisible(false);
         }
     }
+    const handleClose = () => {
+        setEmail('');
+        setErrors({});
+        setVisible(false);
+    }
     return (
         <div className="flex justify-content-center align-items-center h-screen text-primary ">
             <div
@@ -168,7 +173,7 @@ function Login() {
                 </div>
             </Card>
 
-            <Dialog header="Ingrese correo de recuperación" visible={visible} onHide={() => setVisible(false)}
+            <Dialog header="Ingrese correo de recuperación" visible={visible} onHide={() => handleClose()}
             style={{ width: '30vw' }} 
             >
                     <div className="mt-3 ">
@@ -183,7 +188,9 @@ function Login() {
                                 <i className="pi pi-envelope mr-2"></i> Correo electrónico
                             </label>
                         </FloatLabel>
-                        <Button label='Enviar' onClick={()=>sendEmailRecover()}  className=' mt-4 w-full' />
+                        <Button label='Enviar' onClick={()=>sendEmailRecover()}  className=' mt-4 w-full' 
+                            disabled={!email || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)}
+                            />
                     </div>
 
                
