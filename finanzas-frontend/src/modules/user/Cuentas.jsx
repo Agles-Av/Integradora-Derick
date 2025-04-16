@@ -44,8 +44,6 @@ const Cuentas = () => {
     }
   }
   const getCuentas = async () => {
-    console.log("Obteniendo cuentas");
-    
     try {
       const response = await AxiosClient({
         method: "GET",
@@ -54,8 +52,6 @@ const Cuentas = () => {
           "Content-Type": "application/json"
         },
       });
-      console.log(response);
-
       if (response !== null) {
         // Aseguramos que los datos tengan el formato correcto
         const formattedAccounts = response.cuentas.map(account => ({
@@ -138,8 +134,6 @@ const Cuentas = () => {
 
   // Template para la columna de favoritos
   const favoritoBodyTemplate = (rowData) => {
-    console.log("Estado de favorio",rowData.favorito);
-    
     return (
       <Rating
         value={rowData.favorito}
